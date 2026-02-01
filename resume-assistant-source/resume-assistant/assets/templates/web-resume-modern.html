@@ -1,0 +1,641 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="{{name}}的个人简历">
+    <title>{{name}} - 简历</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-color: #2563eb;
+            --text-primary: #1f2937;
+            --text-secondary: #6b7280;
+            --bg-primary: #ffffff;
+            --bg-secondary: #f9fafb;
+            --border-color: #e5e7eb;
+            --shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        [data-theme="dark"] {
+            --primary-color: #3b82f6;
+            --text-primary: #f9fafb;
+            --text-secondary: #d1d5db;
+            --bg-primary: #1f2937;
+            --bg-secondary: #111827;
+            --border-color: #374151;
+            --shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+            line-height: 1.6;
+            color: var(--text-primary);
+            background: var(--bg-secondary);
+            transition: all 0.3s ease;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .resume {
+            background: var(--bg-primary);
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+            overflow: hidden;
+        }
+
+        /* 顶部工具栏 */
+        .toolbar {
+            position: sticky;
+            top: 0;
+            background: var(--bg-primary);
+            border-bottom: 1px solid var(--border-color);
+            padding: 12px 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 100;
+        }
+
+        .toolbar-buttons {
+            display: flex;
+            gap: 8px;
+        }
+
+        .btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn-primary {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            opacity: 0.9;
+        }
+
+        .btn-secondary {
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            border: 1px solid var(--border-color);
+        }
+
+        .btn-secondary:hover {
+            background: var(--border-color);
+        }
+
+        /* 简历内容 */
+        .resume-content {
+            padding: 40px;
+        }
+
+        /* 头部 */
+        .header {
+            text-align: center;
+            padding-bottom: 32px;
+            border-bottom: 2px solid var(--border-color);
+            margin-bottom: 32px;
+        }
+
+        .name {
+            font-size: 36px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 12px;
+        }
+
+        .title {
+            font-size: 18px;
+            color: var(--text-secondary);
+            margin-bottom: 16px;
+        }
+
+        .contact {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 16px;
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        .contact-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .contact-item a {
+            color: var(--primary-color);
+            text-decoration: none;
+        }
+
+        /* 章节 */
+        .section {
+            margin-bottom: 32px;
+        }
+
+        .section-title {
+            font-size: 22px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .section-title::before {
+            content: "";
+            width: 4px;
+            height: 20px;
+            background: var(--primary-color);
+            border-radius: 2px;
+        }
+
+        /* 个人简介 */
+        .summary {
+            font-size: 15px;
+            color: var(--text-secondary);
+            line-height: 1.8;
+        }
+
+        /* 经历条目 */
+        .entry {
+            margin-bottom: 24px;
+            padding-bottom: 24px;
+            border-bottom: 1px dashed var(--border-color);
+        }
+
+        .entry:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+
+        .entry-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            margin-bottom: 8px;
+            flex-wrap: wrap;
+        }
+
+        .entry-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .entry-subtitle {
+            font-size: 15px;
+            color: var(--text-secondary);
+            margin-left: 8px;
+        }
+
+        .entry-date {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        .entry-description {
+            margin-top: 8px;
+            color: var(--text-secondary);
+        }
+
+        .entry-list {
+            list-style: none;
+            margin-top: 12px;
+        }
+
+        .entry-list li {
+            padding-left: 20px;
+            margin-bottom: 8px;
+            position: relative;
+            color: var(--text-secondary);
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .entry-list li::before {
+            content: "•";
+            position: absolute;
+            left: 6px;
+            color: var(--primary-color);
+            font-weight: bold;
+        }
+
+        /* 技能标签 */
+        .skills-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 16px;
+        }
+
+        .skill-item {
+            background: var(--bg-secondary);
+            padding: 12px 16px;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+        }
+
+        .skill-category {
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 6px;
+        }
+
+        .skill-list {
+            color: var(--text-secondary);
+            font-size: 14px;
+        }
+
+        /* 技术标签 */
+        .tech-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 8px;
+        }
+
+        .tech-tag {
+            display: inline-block;
+            padding: 4px 12px;
+            background: var(--bg-secondary);
+            color: var(--primary-color);
+            border: 1px solid var(--primary-color);
+            border-radius: 16px;
+            font-size: 12px;
+        }
+
+        /* 响应式 */
+        @media (max-width: 768px) {
+            .resume-content {
+                padding: 24px;
+            }
+
+            .name {
+                font-size: 28px;
+            }
+
+            .contact {
+                flex-direction: column;
+                gap: 8px;
+            }
+
+            .entry-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .toolbar {
+                padding: 12px 16px;
+            }
+
+            .btn {
+                padding: 6px 12px;
+                font-size: 13px;
+            }
+        }
+
+        /* 打印样式 - 保持屏幕显示样式 */
+        @media print {
+            @page {
+                size: A4;
+                margin: 12mm 15mm;
+            }
+
+            * {
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+                color-adjust: exact !important;
+            }
+
+            body {
+                background: var(--bg-secondary) !important;
+                margin: 0;
+                padding: 0;
+            }
+
+            .toolbar {
+                display: none !important;
+            }
+
+            .container {
+                max-width: 210mm;
+                padding: 10mm 0;
+                margin: 0 auto;
+            }
+
+            .resume {
+                box-shadow: none !important;
+                border-radius: 8px;
+                background: var(--bg-primary) !important;
+                page-break-after: avoid;
+            }
+
+            .resume-content {
+                padding: 25px 30px;
+            }
+
+            /* 保持屏幕样式的字体大小 */
+            .name {
+                font-size: 32px;
+            }
+
+            .title {
+                font-size: 16px;
+            }
+
+            .contact {
+                font-size: 13px;
+            }
+
+            .section-title {
+                font-size: 20px;
+                page-break-after: avoid;
+            }
+
+            .summary {
+                font-size: 14px;
+                line-height: 1.8;
+            }
+
+            .entry {
+                page-break-inside: avoid;
+            }
+
+            .entry-title {
+                font-size: 16px;
+            }
+
+            .entry-subtitle {
+                font-size: 14px;
+            }
+
+            .entry-date {
+                font-size: 13px;
+            }
+
+            .entry-list li {
+                font-size: 13px;
+                line-height: 1.6;
+            }
+
+            .tech-tag {
+                font-size: 11px;
+                border: 1px solid var(--primary-color);
+                background: var(--bg-secondary);
+            }
+
+            .skill-item {
+                background: var(--bg-secondary);
+                border: 1px solid var(--border-color);
+                page-break-inside: avoid;
+            }
+
+            .skill-category {
+                font-size: 13px;
+            }
+
+            .skill-list {
+                font-size: 12px;
+            }
+
+            /* 保持颜色 */
+            .section-title::before {
+                background: var(--primary-color) !important;
+            }
+
+            a {
+                color: var(--primary-color) !important;
+                text-decoration: none;
+            }
+
+            /* 确保所有节不断页 */
+            .header,
+            .section {
+                page-break-inside: avoid;
+            }
+        }
+
+        /* 加载动画 */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .section {
+            animation: fadeIn 0.5s ease-out;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="resume">
+            <!-- 工具栏 -->
+            <div class="toolbar">
+                <div style="font-weight: 600; color: var(--text-primary);">在线简历</div>
+                <div class="toolbar-buttons">
+                    <button class="btn btn-secondary" onclick="toggleTheme()">
+                        <span id="theme-icon">🌙</span>
+                        <span id="theme-text">深色模式</span>
+                    </button>
+                    <button class="btn btn-primary" onclick="window.print()">
+                        📄 打印/导出PDF
+                    </button>
+                </div>
+            </div>
+
+            <!-- 简历内容 -->
+            <div class="resume-content">
+                <!-- 头部 -->
+                <header class="header">
+                    <h1 class="name">{{name}}</h1>
+                    {{#if title}}<div class="title">{{title}}</div>{{/if}}
+                    <div class="contact">
+                        {{#if phone}}<div class="contact-item">📱 {{phone}}</div>{{/if}}
+                        {{#if email}}<div class="contact-item">📧 <a href="mailto:{{email}}">{{email}}</a></div>{{/if}}
+                        {{#if github}}<div class="contact-item">💻 <a href="{{github}}" target="_blank">GitHub</a></div>{{/if}}
+                        {{#if linkedin}}<div class="contact-item">🔗 <a href="{{linkedin}}" target="_blank">LinkedIn</a></div>{{/if}}
+                        {{#if location}}<div class="contact-item">📍 {{location}}</div>{{/if}}
+                    </div>
+                </header>
+
+                <!-- 个人简介 -->
+                {{#if summary}}
+                <section class="section">
+                    <h2 class="section-title">个人简介</h2>
+                    <p class="summary">{{summary}}</p>
+                </section>
+                {{/if}}
+
+                <!-- 工作经历 -->
+                {{#if experience}}
+                <section class="section">
+                    <h2 class="section-title">工作经历</h2>
+                    {{#each experience}}
+                    <div class="entry">
+                        <div class="entry-header">
+                            <div>
+                                <span class="entry-title">{{company}}</span>
+                                <span class="entry-subtitle">{{position}}</span>
+                            </div>
+                            <span class="entry-date">{{startDate}} - {{endDate}}</span>
+                        </div>
+                        {{#if tech}}
+                        <div class="tech-tags">
+                            {{#each tech}}<span class="tech-tag">{{this}}</span>{{/each}}
+                        </div>
+                        {{/if}}
+                        <ul class="entry-list">
+                            {{#each achievements}}
+                            <li>{{this}}</li>
+                            {{/each}}
+                        </ul>
+                    </div>
+                    {{/each}}
+                </section>
+                {{/if}}
+
+                <!-- 项目经验 -->
+                {{#if projects}}
+                <section class="section">
+                    <h2 class="section-title">项目经验</h2>
+                    {{#each projects}}
+                    <div class="entry">
+                        <div class="entry-header">
+                            <span class="entry-title">{{name}}</span>
+                            {{#if date}}<span class="entry-date">{{date}}</span>{{/if}}
+                        </div>
+                        {{#if role}}<div class="entry-description">角色：{{role}}</div>{{/if}}
+                        {{#if tech}}
+                        <div class="tech-tags">
+                            {{#each tech}}<span class="tech-tag">{{this}}</span>{{/each}}
+                        </div>
+                        {{/if}}
+                        <ul class="entry-list">
+                            {{#each details}}
+                            <li>{{this}}</li>
+                            {{/each}}
+                        </ul>
+                    </div>
+                    {{/each}}
+                </section>
+                {{/if}}
+
+                <!-- 教育背景 -->
+                {{#if education}}
+                <section class="section">
+                    <h2 class="section-title">教育背景</h2>
+                    {{#each education}}
+                    <div class="entry">
+                        <div class="entry-header">
+                            <div>
+                                <span class="entry-title">{{school}}</span>
+                                <span class="entry-subtitle">{{degree}} · {{major}}</span>
+                            </div>
+                            <span class="entry-date">{{startDate}} - {{endDate}}</span>
+                        </div>
+                        {{#if gpa}}<div class="entry-description">GPA: {{gpa}}</div>{{/if}}
+                    </div>
+                    {{/each}}
+                </section>
+                {{/if}}
+
+                <!-- 技能清单 -->
+                {{#if skills}}
+                <section class="section">
+                    <h2 class="section-title">技能清单</h2>
+                    <div class="skills-grid">
+                        {{#each skills}}
+                        <div class="skill-item">
+                            <div class="skill-category">{{category}}</div>
+                            <div class="skill-list">{{items}}</div>
+                        </div>
+                        {{/each}}
+                    </div>
+                </section>
+                {{/if}}
+
+                <!-- 其他信息 -->
+                {{#if other}}
+                <section class="section">
+                    <h2 class="section-title">其他</h2>
+                    <ul class="entry-list">
+                        {{#each other}}
+                        <li>{{this}}</li>
+                        {{/each}}
+                    </ul>
+                </section>
+                {{/if}}
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 深色模式切换
+        function toggleTheme() {
+            const html = document.documentElement;
+            const currentTheme = html.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+
+            html.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+
+            // 更新按钮文字和图标
+            const icon = document.getElementById('theme-icon');
+            const text = document.getElementById('theme-text');
+
+            if (newTheme === 'dark') {
+                icon.textContent = '☀️';
+                text.textContent = '浅色模式';
+            } else {
+                icon.textContent = '🌙';
+                text.textContent = '深色模式';
+            }
+        }
+
+        // 页面加载时恢复主题设置
+        (function() {
+            const savedTheme = localStorage.getItem('theme') || 'light';
+            document.documentElement.setAttribute('data-theme', savedTheme);
+
+            if (savedTheme === 'dark') {
+                document.getElementById('theme-icon').textContent = '☀️';
+                document.getElementById('theme-text').textContent = '浅色模式';
+            }
+        })();
+
+        // 页面加载完成提示
+        window.addEventListener('load', function() {
+            console.log('✅ 简历加载完成');
+            console.log('💡 提示：点击"打印/导出PDF"按钮可以保存为PDF文件');
+        });
+    </script>
+</body>
+</html>

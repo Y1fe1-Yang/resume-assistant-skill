@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{name}} - 简历</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: "PingFang SC", "Microsoft YaHei", "Helvetica Neue", Arial, sans-serif;
+            font-size: 13px;
+            line-height: 1.5;
+            color: #333;
+            background: #fff;
+            padding: 30px 40px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        /* 头部 - 双栏布局 */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            padding-bottom: 15px;
+            border-bottom: 3px solid #0066cc;
+            margin-bottom: 20px;
+        }
+
+        .header-left {
+            flex: 1;
+        }
+
+        .name {
+            font-size: 26px;
+            font-weight: 700;
+            color: #0066cc;
+            margin-bottom: 5px;
+        }
+
+        .title {
+            font-size: 14px;
+            color: #555;
+            font-weight: 500;
+        }
+
+        .header-right {
+            text-align: right;
+            font-size: 12px;
+            color: #666;
+            line-height: 1.8;
+        }
+
+        .header-right a {
+            color: #0066cc;
+            text-decoration: none;
+        }
+
+        /* 双栏主体 */
+        .main {
+            display: grid;
+            grid-template-columns: 1fr 220px;
+            gap: 25px;
+        }
+
+        /* 左侧主内容 */
+        .content {
+            /* 主要内容区 */
+        }
+
+        /* 右侧边栏 */
+        .sidebar {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 5px;
+        }
+
+        /* 段落样式 */
+        .section {
+            margin-bottom: 18px;
+        }
+
+        .section-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: #0066cc;
+            border-left: 3px solid #0066cc;
+            padding-left: 10px;
+            margin-bottom: 10px;
+        }
+
+        .sidebar .section-title {
+            border-left: none;
+            padding-left: 0;
+            font-size: 13px;
+        }
+
+        /* 个人简介 */
+        .summary {
+            font-size: 13px;
+            color: #444;
+            text-align: justify;
+        }
+
+        /* 经历条目 */
+        .entry {
+            margin-bottom: 12px;
+        }
+
+        .entry-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            margin-bottom: 3px;
+        }
+
+        .entry-title {
+            font-weight: 600;
+            color: #333;
+        }
+
+        .entry-subtitle {
+            font-weight: 500;
+            color: #0066cc;
+            font-size: 12px;
+        }
+
+        .entry-date {
+            font-size: 12px;
+            color: #888;
+        }
+
+        .entry-list {
+            margin-left: 15px;
+            margin-top: 5px;
+        }
+
+        .entry-list li {
+            margin-bottom: 3px;
+            color: #444;
+            font-size: 12px;
+        }
+
+        /* 技术栈标签 */
+        .tech-stack {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+            margin: 5px 0;
+        }
+
+        .tech-tag {
+            background: #e3f2fd;
+            color: #0066cc;
+            padding: 2px 8px;
+            border-radius: 3px;
+            font-size: 11px;
+        }
+
+        /* 侧边栏技能 */
+        .skill-group {
+            margin-bottom: 12px;
+        }
+
+        .skill-label {
+            font-weight: 600;
+            color: #333;
+            font-size: 12px;
+            margin-bottom: 5px;
+        }
+
+        .skill-bar-container {
+            display: flex;
+            align-items: center;
+            margin-bottom: 5px;
+        }
+
+        .skill-name {
+            width: 80px;
+            font-size: 11px;
+            color: #555;
+        }
+
+        .skill-bar {
+            flex: 1;
+            height: 6px;
+            background: #ddd;
+            border-radius: 3px;
+            overflow: hidden;
+        }
+
+        .skill-level {
+            height: 100%;
+            background: linear-gradient(90deg, #0066cc, #00aaff);
+            border-radius: 3px;
+        }
+
+        .skill-list {
+            font-size: 11px;
+            color: #555;
+            line-height: 1.8;
+        }
+
+        /* 链接图标 */
+        .links {
+            margin-top: 10px;
+        }
+
+        .link-item {
+            display: block;
+            font-size: 11px;
+            color: #0066cc;
+            margin-bottom: 5px;
+            text-decoration: none;
+        }
+
+        /* 证书/语言 */
+        .cert-item, .lang-item {
+            font-size: 12px;
+            color: #444;
+            margin-bottom: 5px;
+        }
+
+        /* 打印优化 */
+        @media print {
+            body {
+                padding: 15px 25px;
+            }
+
+            .sidebar {
+                background: #f8f9fa !important;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+
+            .section {
+                page-break-inside: avoid;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 头部信息 -->
+    <header class="header">
+        <div class="header-left">
+            <h1 class="name">{{name}}</h1>
+            {{#if title}}<p class="title">{{title}}</p>{{/if}}
+        </div>
+        <div class="header-right">
+            <div>{{phone}}</div>
+            <div>{{email}}</div>
+            {{#if location}}<div>{{location}}</div>{{/if}}
+        </div>
+    </header>
+
+    <div class="main">
+        <!-- 左侧主内容 -->
+        <div class="content">
+            <!-- 个人简介 -->
+            {{#if summary}}
+            <section class="section">
+                <h2 class="section-title">个人简介</h2>
+                <p class="summary">{{summary}}</p>
+            </section>
+            {{/if}}
+
+            <!-- 工作经历 -->
+            {{#if experience}}
+            <section class="section">
+                <h2 class="section-title">工作经历</h2>
+                {{#each experience}}
+                <div class="entry">
+                    <div class="entry-header">
+                        <div>
+                            <span class="entry-title">{{company}}</span>
+                            <span class="entry-subtitle">{{position}}</span>
+                        </div>
+                        <span class="entry-date">{{startDate}} - {{endDate}}</span>
+                    </div>
+                    {{#if tech}}
+                    <div class="tech-stack">
+                        {{#each tech}}
+                        <span class="tech-tag">{{this}}</span>
+                        {{/each}}
+                    </div>
+                    {{/if}}
+                    <ul class="entry-list">
+                        {{#each achievements}}
+                        <li>{{this}}</li>
+                        {{/each}}
+                    </ul>
+                </div>
+                {{/each}}
+            </section>
+            {{/if}}
+
+            <!-- 项目经验 -->
+            {{#if projects}}
+            <section class="section">
+                <h2 class="section-title">项目经验</h2>
+                {{#each projects}}
+                <div class="entry">
+                    <div class="entry-header">
+                        <span class="entry-title">{{name}}</span>
+                        {{#if date}}<span class="entry-date">{{date}}</span>{{/if}}
+                    </div>
+                    {{#if tech}}
+                    <div class="tech-stack">
+                        {{#each tech}}
+                        <span class="tech-tag">{{this}}</span>
+                        {{/each}}
+                    </div>
+                    {{/if}}
+                    <ul class="entry-list">
+                        {{#each details}}
+                        <li>{{this}}</li>
+                        {{/each}}
+                    </ul>
+                </div>
+                {{/each}}
+            </section>
+            {{/if}}
+
+            <!-- 教育背景 -->
+            {{#if education}}
+            <section class="section">
+                <h2 class="section-title">教育背景</h2>
+                {{#each education}}
+                <div class="entry">
+                    <div class="entry-header">
+                        <div>
+                            <span class="entry-title">{{school}}</span>
+                            <span class="entry-subtitle">{{degree}} · {{major}}</span>
+                        </div>
+                        <span class="entry-date">{{startDate}} - {{endDate}}</span>
+                    </div>
+                    {{#if gpa}}<p style="font-size: 11px; color: #666; margin-left: 15px;">GPA: {{gpa}}</p>{{/if}}
+                </div>
+                {{/each}}
+            </section>
+            {{/if}}
+        </div>
+
+        <!-- 右侧边栏 -->
+        <aside class="sidebar">
+            <!-- 技术技能 -->
+            {{#if skills}}
+            <section class="section">
+                <h2 class="section-title">技术技能</h2>
+                {{#each skills}}
+                <div class="skill-group">
+                    <div class="skill-label">{{category}}</div>
+                    <div class="skill-list">{{items}}</div>
+                </div>
+                {{/each}}
+            </section>
+            {{/if}}
+
+            <!-- 链接 -->
+            {{#if links}}
+            <section class="section">
+                <h2 class="section-title">链接</h2>
+                <div class="links">
+                    {{#each links}}
+                    <a href="{{url}}" class="link-item">{{name}}</a>
+                    {{/each}}
+                </div>
+            </section>
+            {{/if}}
+
+            <!-- 证书 -->
+            {{#if certificates}}
+            <section class="section">
+                <h2 class="section-title">证书资质</h2>
+                {{#each certificates}}
+                <div class="cert-item">{{this}}</div>
+                {{/each}}
+            </section>
+            {{/if}}
+
+            <!-- 语言 -->
+            {{#if languages}}
+            <section class="section">
+                <h2 class="section-title">语言能力</h2>
+                {{#each languages}}
+                <div class="lang-item">{{name}}: {{level}}</div>
+                {{/each}}
+            </section>
+            {{/if}}
+        </aside>
+    </div>
+</body>
+</html>
