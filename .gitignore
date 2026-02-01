@@ -48,7 +48,25 @@ outputs/*.docx
 outputs/*.html
 !outputs/resume_data.json
 
+# Test output files
+resume-assistant-source/resume-assistant/scripts/current/*.pdf
+resume-assistant-source/resume-assistant/scripts/current/*.docx
+resume-assistant-source/resume-assistant/scripts/current/*.html
+resume-assistant-source/resume-assistant/scripts/current/*.xlsx
+
+# Deprecated scripts output (should not be committed)
+resume-assistant-source/resume-assistant/scripts/deprecated/*.pdf
+resume-assistant-source/resume-assistant/scripts/deprecated/*.docx
+
 # Ignore temporary scripts
 PUSH_*.sh
 PUSH_*.md
 COMMIT_*.md
+
+# Font cache
+/tmp/fonts/
+
+# User data files (sensitive information)
+*_private.json
+*_confidential.json
+my_resume_*.json

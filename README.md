@@ -1,335 +1,327 @@
 # Resume Assistant Skill
 
-智能简历助手技能包，包含五个专业代理为学生提供全方位求职支持。
+> 智能简历助手技能包 - 为学生提供全方位求职支持的五个专业AI代理
 
-## 🎉 v2.0 重要更新 (2026-02-01)
-
-### ✅ 主要修复
-- 修正PDF生成命令（从weasyprint改为fpdf2）
-- 添加完整的环境配置指南
-- 添加JSON数据格式说明
-- 修复代码DeprecationWarning
-- 新增示例数据文件
-
-**详细信息**: 查看 [FIXES_APPLIED.md](FIXES_APPLIED.md) 和 [skill_analysis_report.md](skill_analysis_report.md)
+[![Version](https://img.shields.io/badge/version-2.0.3-blue.svg)](releases/)
+[![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
+[![Python](https://img.shields.io/badge/python-3.7%2B-blue.svg)](https://www.python.org/)
 
 ---
 
-## 安装方法
+## 🎯 快速开始
+
+### 一行命令安装
 
 ```bash
-# 方法1：通过 Claude Code 安装
-将 resume-assistant.skill 文件拖入 Claude Code 对话框
-
-# 方法2：手动安装
-cp resume-assistant.skill ~/.claude/skills/
+# 将 resume-assistant.skill 文件拖入 Claude Code 对话框即可
 ```
 
-## ⚠️ 首次使用必读
+### ⚠️ 重要提示
 
-**必须先完成环境配置，否则PDF生成会失败：**
+**首次使用前必须完成环境配置！** 详见 [INSTALLATION.md](INSTALLATION.md)
 
 ```bash
-# 1. 安装Python依赖
 pip install fpdf2 python-docx openpyxl
-
-# 2. 下载中文字体（PDF生成必需）
-mkdir -p /tmp/fonts
-curl -L -o /tmp/fonts/NotoSansSC.ttf \
+mkdir -p /tmp/fonts && curl -L -o /tmp/fonts/NotoSansSC.ttf \
   "https://github.com/notofonts/noto-cjk/raw/main/Sans/Variable/TTF/Subset/NotoSansSC-VF.ttf"
 ```
 
-**注意**: 字体文件约17MB，首次下载需要一些时间。
-
 ---
 
-## 技能概览
+## ✨ 核心功能
 
-### 五个专业代理
+### 五个专业AI代理
 
 | 代理 | 功能 | 触发词示例 |
-|------|------|-----------|
-| **1. 故事挖掘** | 引导学生发现被忽略的有价值经历 | "我不知道写什么"、"帮我挖掘经历" |
-| **2. 职位推荐** | 基于背景推荐适合的岗位方向 | "不知道找什么工作"、"适合什么岗位" |
-| **3. 简历优化** | 根据JD针对性优化简历内容 | "帮我优化简历"、"投这个岗位" |
-| **4. 模拟面试** | 扮演面试官提问并反向优化简历 | "模拟面试"、"帮我练习面试" |
-| **5. 能力提升** | 分析差距并制定具体提升计划 | "我想冲这个岗但能力不够" |
+|:---:|:---|:---|
+| 🔍 **故事挖掘** | 发现被忽略的宝贵经历 | "我不知道写什么"<br>"帮我挖掘经历" |
+| 💼 **职位推荐** | 基于背景推荐适合岗位 | "不知道找什么工作"<br>"适合什么岗位" |
+| 📝 **简历优化** | 针对JD优化简历内容 | "帮我优化简历"<br>"投这个岗位" |
+| 🎭 **模拟面试** | 面试练习+反向优化简历 | "模拟面试"<br>"帮我练习面试" |
+| 📈 **能力提升** | 分析差距+制定提升计划 | "我想冲这个岗但能力不够" |
 
-### 工作流程
+### 完整工作流
 
-```
-故事挖掘 → 职位推荐 → 能力提升 → 简历优化 → 模拟面试
-   ↓           ↓           ↓           ↓           ↓
-经历档案    推荐报告    提升计划    优化简历    面试反馈
+```mermaid
+graph LR
+    A[故事挖掘] --> B[职位推荐]
+    B --> C[能力提升]
+    C --> D[简历优化]
+    D --> E[模拟面试]
+    E -.反馈.-> D
 ```
 
 ---
 
-## 使用场景
+## 🚀 使用场景
 
-### 场景1：完全不知道从哪开始
+<details>
+<summary><b>场景1：完全不知道从哪开始</b></summary>
+
 ```
 用户："我不知道简历写什么，也不知道找什么工作"
 助手：代理1（故事挖掘）→ 代理2（职位推荐）→ 代理3（简历优化）
+输出：经历档案 + 岗位建议 + 初版简历
 ```
+</details>
 
-### 场景2：有目标但能力不够
+<details>
+<summary><b>场景2：有目标但能力不够</b></summary>
+
 ```
 用户："我想冲字节产品经理，但是应届生没经验"
 助手：代理5（能力提升）→ 制定3-6个月提升计划
+输出：差距分析 + 分阶段计划 + 学习资源 + 备选方案
 ```
+</details>
 
-### 场景3：有简历需要优化
+<details>
+<summary><b>场景3：有简历需要优化</b></summary>
+
 ```
 用户："帮我根据这个JD优化简历"
-助手：代理3（简历优化）→ 生成优化版简历
+助手：代理3（简历优化）→ 生成针对性简历
+输出：优化版简历（PDF/DOCX/HTML）
 ```
+</details>
 
-### 场景4：准备面试
+<details>
+<summary><b>场景4：准备面试</b></summary>
+
 ```
 用户："下周要面试了，帮我练习"
-助手：代理4（模拟面试）→ 提问评估反馈
+助手：代理4（模拟面试）→ 提问、评估、反馈
+输出：面试反馈报告 + 简历改进建议
+```
+</details>
+
+---
+
+## 📦 支持的输出格式
+
+### 简历格式
+
+| 格式 | 特点 | 推荐场景 |
+|:---:|:---|:---|
+| **PDF** ⭐ | 专业、跨平台兼容 | 正式投递 |
+| **DOCX** | 可编辑、HR友好 | 需要进一步修改 |
+| **HTML** | 响应式、支持深色模式 | 在线展示、打印 |
+
+### 生成命令
+
+```bash
+# 切换到脚本目录
+cd ~/.claude/skills/resume-assistant-skill/resume-assistant-source/resume-assistant/scripts/current
+
+# 生成 PDF（推荐）
+python create_pdf_resume.py --data resume_data.json --output resume.pdf
+
+# 生成 DOCX
+python create_docx_resume.py output.docx --data resume_data.json
+
+# 生成 HTML
+python create_web_resume.py --data resume_data.json --output resume.html
+
+# 生成能力提升追踪表（Excel）
+python create_growth_tracker.py --data growth_plan.json --output growth_tracker.xlsx
 ```
 
 ---
 
-## 输出格式
+## 🌟 独特优势
 
-简历优化完成后，可以生成多种格式：
+### 1. 故事挖掘的创新性
+- ✅ 不只问"做过什么"，引导回忆被忽略的经历
+- ✅ 发掘非传统经历（游戏公会管理、班级活动组织等）
+- ✅ 识别可迁移技能
 
-### PDF格式（推荐） ⭐
+### 2. 能力提升的实用性
+- ✅ 诚实评估差距（不盲目鼓励，不打击信心）
+- ✅ 具体可执行计划（非空洞的"多学习"）
+- ✅ 现实的Plan B方案
 
-```bash
-# 切换到skill目录
-cd ~/.claude/skills/resume-assistant-skill/resume-assistant-source/resume-assistant
-
-# 生成PDF
-python scripts/create_pdf_resume.py --data resume_data.json --output resume.pdf
-```
-
-**前置要求**：
-1. 已安装 `fpdf2`：`pip install fpdf2`
-2. 已下载中文字体（见"首次使用必读"）
-
-### DOCX格式
-
-```bash
-cd ~/.claude/skills/resume-assistant-skill/resume-assistant-source/resume-assistant
-python scripts/create_docx_resume.py output.docx --data resume_data.json
-```
-
-**前置要求**：`pip install python-docx`
-
-### HTML格式
-
-```bash
-cd ~/.claude/skills/resume-assistant-skill/resume-assistant-source/resume-assistant
-python scripts/create_web_resume.py --data resume_data.json --output resume.html
-```
-
-**特点**：响应式设计、支持深色模式、可打印为PDF
+### 3. 模拟面试的反向优化
+- ✅ 发现简历问题而非仅练习回答
+- ✅ 如果答不上来，说明简历经不起追问
+- ✅ 根据面试表现反向修改简历
 
 ---
 
-## 数据格式
+## 📚 文档
 
-### 简历数据 (resume_data.json)
+| 文档 | 内容 |
+|:---|:---|
+| [INSTALLATION.md](INSTALLATION.md) | 详细安装指南（含平台特定说明） |
+| [TROUBLESHOOTING.md](TROUBLESHOOTING.md) | 常见问题与解决方案 |
+| [CHANGELOG.md](CHANGELOG.md) | 版本更新历史 |
+| [releases/](releases/) | 历史发布说明 |
 
-代理3完成后会自动生成此格式，也可以手动创建。参考示例文件：
-`resume-assistant-source/resume-assistant/examples/resume_data_example.json`
+### 技能内部文档
+
+- `resume-assistant-source/resume-assistant/SKILL.md` - 技能主文档
+- `resume-assistant-source/resume-assistant/references/` - 代理实现指南
+- `resume-assistant-source/resume-assistant/examples/` - 示例数据文件
+
+---
+
+## 🛠️ 技术栈
+
+### 核心依赖
+
+```
+fpdf2>=2.7.0          # PDF 生成
+python-docx>=1.1.0    # DOCX 生成
+openpyxl>=3.1.0       # Excel 生成
+```
+
+### 系统要求
+
+- **Python**: 3.7+
+- **Claude Code**: 最新版本
+- **磁盘空间**: 约 100MB（含字体文件）
+
+---
+
+## 📖 示例数据
+
+技能包含完整的示例数据文件：
+
+```
+examples/
+├── resume_data_example.json      # 完整简历数据示例
+├── fresh_graduate_example.json   # 应届生示例
+├── experienced_example.json      # 有经验者示例
+├── growth_plan_example.json      # 能力提升计划示例
+└── USAGE_GUIDE.md                # 使用指南
+```
+
+查看示例：
+```bash
+cat ~/.claude/skills/resume-assistant-skill/resume-assistant-source/resume-assistant/examples/resume_data_example.json
+```
+
+---
+
+## 🔧 高级用法
+
+### JSON 数据格式
+
+简历数据使用 JSON 格式，必填字段为 `name`：
 
 ```json
 {
-  "name": "姓名",
-  "title": "求职意向",
-  "phone": "联系电话",
-  "email": "邮箱地址",
-  "location": "所在城市",
+  "name": "张三",
+  "title": "前端开发工程师",
+  "phone": "138****8888",
+  "email": "zhangsan@example.com",
+  "location": "北京",
   "is_fresh_graduate": true,
-  "summary": "个人简介",
+  "summary": "个人简介...",
   "education": [...],
   "projects": [...],
   "experience": [...],
-  "skills": [...],
-  "other": [...]
+  "skills": [...]
 }
 ```
 
-**必填字段**：`name`（其他字段可选）
-
-### 能力提升计划 (growth_plan.json)
-
-参考示例文件：
-`resume-assistant-source/resume-assistant/examples/growth_plan_example.json`
+完整格式请参考 `examples/resume_data_example.json`
 
 ---
 
-## 技能内容
+## 📊 版本信息
 
-### 核心文件
-- `SKILL.md` - 技能主文档，包含所有代理的工作流程
+### 当前版本：v2.0.3 (2026-02-01)
 
-### 代理指南
-- `references/agent-story-mining.md` - 故事挖掘代理详细指南
-- `references/agent-job-recommendation.md` - 职位推荐代理详细指南
-- `references/agent-resume-optimization.md` - 简历优化代理详细指南
-- `references/agent-mock-interview.md` - 模拟面试代理详细指南
-- `references/agent-growth-planning.md` - 能力提升代理详细指南
+✅ **主要特性：**
+- 修正 PDF 生成命令（fpdf2）
+- 完整中文字体支持
+- 新增详细文档（INSTALLATION.md, TROUBLESHOOTING.md）
+- 优化脚本组织结构
+- 添加完整示例数据
 
-### 参考资源
-- `references/writing-guide.md` - 简历写作完整指南
-- `references/industry-keywords.md` - 各行业关键词参考
+### 升级说明
 
-### 模板与脚本
-- `assets/templates/professional-simple.html` - 简约专业型简历模板
-- `assets/templates/technical.html` - 技术专业型简历模板
-- `scripts/create_pdf_resume.py` - PDF生成脚本
-- `scripts/create_docx_resume.py` - DOCX生成脚本
-- `scripts/create_web_resume.py` - 网页简历生成脚本
-- `scripts/create_growth_tracker.py` - Excel追踪表生成脚本
+从旧版本升级：
 
-### 示例文件 (NEW)
-- `examples/resume_data_example.json` - 完整的简历数据示例
-- `examples/growth_plan_example.json` - 能力提升计划示例
-
----
-
-## 示例对话
-
-### 示例1：故事挖掘
-```
-用户：我不知道简历写什么
-助手：我来帮你发现一些你可能忽略的宝贵经历。
-     你目前是什么专业/年级？
-
-用户：计算机大三
-助手：很好！让我们聊聊你的经历。课程中做过最有挑战性的项目是什么？
-```
-
-### 示例2：能力提升
-```
-用户：我想冲字节产品经理，但是应届生没经验
-助手：我来帮你分析差距并制定提升计划。
-     [生成完整的能力提升规划报告]
-     - 差距诊断（当前匹配度3/10）
-     - 分阶段提升计划（24周）
-     - 具体学习资源推荐
-     - 备选方案建议
-```
-
-### 示例3：模拟面试
-```
-用户：帮我准备面试
-助手：[切换到面试官角色]
-     你好，我是今天的面试官。请先做个1-2分钟的自我介绍。
-
-     [面试结束后]
-     [生成面试反馈报告]
-     - 各经历回答评分
-     - 需要改进的地方
-     - 简历修改建议
-```
-
----
-
-## 故障排查
-
-### 常见问题
-
-#### 1. PDF生成失败："Not a TrueType font"
-**原因**：字体文件缺失
-
-**解决**：
 ```bash
-mkdir -p /tmp/fonts
-curl -L -o /tmp/fonts/NotoSansSC.ttf \
-  "https://github.com/notofonts/noto-cjk/raw/main/Sans/Variable/TTF/Subset/NotoSansSC-VF.ttf"
+# 1. 备份数据
+cp ~/.claude/skills/resume-assistant.skill ~/.claude/skills/resume-assistant.skill.bak
+
+# 2. 下载新版本
+# 从 GitHub releases 下载 resume-assistant.skill
+
+# 3. 安装新版本
+cp resume-assistant.skill ~/.claude/skills/
+
+# 4. 更新依赖
+pip install --upgrade fpdf2 python-docx openpyxl
 ```
 
-#### 2. 脚本找不到："No such file or directory"
-**原因**：未切换到skill目录
-
-**解决**：
-```bash
-cd ~/.claude/skills/resume-assistant-skill/resume-assistant-source/resume-assistant
-```
-
-#### 3. 依赖包缺失
-**解决**：
-```bash
-pip install fpdf2 python-docx openpyxl
-```
+查看完整更新日志：[CHANGELOG.md](CHANGELOG.md)
 
 ---
 
-## 特色功能
+## 🤝 贡献
 
-### 1. 故事挖掘的独特之处
-- 不只是问"你做过什么"，而是引导学生回忆被忽略的经历
-- 包括游戏公会管理、组织班级活动等非传统经历
-- 帮助识别可迁移技能
+欢迎贡献代码、报告问题或提出建议！
 
-### 2. 能力提升的实用性
-- 诚实评估差距（不盲目鼓励，也不打击信心）
-- 给出具体可执行的计划（不是空洞的"多学习"）
-- 提供备选方案（现实的Plan B）
+### 报告问题
 
-### 3. 模拟面试的反向优化
-- 不只是练习回答，更重要的是发现简历问题
-- 如果学生答不上来，说明简历写了经不起追问的内容
-- 根据面试表现反向修改简历
+1. 查看 [TROUBLESHOOTING.md](TROUBLESHOOTING.md)
+2. 搜索 [已有 Issues](https://github.com/Y1fe1-Yang/resume-assistant-skill/issues)
+3. 如未找到，[创建新 Issue](https://github.com/Y1fe1-Yang/resume-assistant-skill/issues/new)
 
----
+### Pull Request
 
-## 技术规范
-
-本技能严格遵循 Claude Skills 创建标准：
-
-- ✅ 使用渐进式披露设计（metadata → SKILL.md → references）
-- ✅ SKILL.md < 600行，详细内容在独立references文件
-- ✅ 清晰的触发词和使用场景说明
-- ✅ 每个代理有独立的详细指南
-- ✅ 提供可复用的脚本和模板
-- ✅ 完整的示例数据文件
-- ✅ 详细的故障排查指南
+1. Fork 本仓库
+2. 创建特性分支 (`git checkout -b feature/AmazingFeature`)
+3. 提交更改 (`git commit -m 'Add some AmazingFeature'`)
+4. 推送到分支 (`git push origin feature/AmazingFeature`)
+5. 创建 Pull Request
 
 ---
 
-## 版本信息
+## 📄 许可证
 
-- **版本**: 2.0.0 (修复版)
-- **更新日期**: 2026-02-01
-- **创建日期**: 2026-01-31
-- **适用对象**: 在校学生、应届毕业生
-- **语言**: 简体中文为主，支持英文
-
-### 更新日志
-
-#### v2.0.0 (2026-02-01)
-- 🔴 修正PDF生成命令和依赖
-- 🔴 添加完整的环境配置指南
-- 🔴 添加JSON数据格式完整说明
-- 🟡 修复脚本路径问题
-- 🟡 添加工作流转换说明
-- 🟢 修复代码DeprecationWarning
-- 🟢 新增完整示例数据文件
-- 🟢 添加故障排查指南
-
-详细信息: [FIXES_APPLIED.md](FIXES_APPLIED.md) | [测试报告](skill_analysis_report.md)
-
-#### v1.0.0 (2026-01-31)
-- 初始版本发布
+本项目采用 MIT 许可证 - 详见 [LICENSE](LICENSE) 文件
 
 ---
 
-## 反馈与改进
+## 🙏 致谢
 
-如有建议或发现问题，欢迎通过以下方式反馈：
-- GitHub Issues: [提交问题](https://github.com/Y1fe1-Yang/resume-assistant-skill/issues)
-- Pull Request: 欢迎贡献代码
+- [Claude Code](https://claude.ai/claude-code) - AI 开发环境
+- [fpdf2](https://github.com/py-pdf/fpdf2) - PDF 生成库
+- [python-docx](https://github.com/python-openxml/python-docx) - DOCX 处理库
+- [Noto Sans CJK](https://github.com/notofonts/noto-cjk) - 开源中文字体
 
 ---
 
-**开始使用**：安装技能后，直接对 Claude 说"帮我准备简历"或"我不知道找什么工作"即可触发相应代理。
+## 📞 联系方式
 
-**🎉 v2.0 已修复所有已知问题，可放心使用！**
+- **GitHub Issues**: [提交问题](https://github.com/Y1fe1-Yang/resume-assistant-skill/issues)
+- **GitHub Discussions**: [参与讨论](https://github.com/Y1fe1-Yang/resume-assistant-skill/discussions)
+
+---
+
+## 🎯 快速链接
+
+- [📥 安装指南](INSTALLATION.md) - 详细的安装步骤
+- [🔧 故障排查](TROUBLESHOOTING.md) - 常见问题解决方案
+- [📝 更新日志](CHANGELOG.md) - 版本历史
+- [📦 发布说明](releases/) - 历史版本详情
+- [💡 使用示例](resume-assistant-source/resume-assistant/examples/USAGE_GUIDE.md) - 实用案例
+
+---
+
+<p align="center">
+  <b>开始使用</b>：安装技能后，直接对 Claude 说<br>
+  <i>"帮我准备简历"</i> 或 <i>"我不知道找什么工作"</i>
+</p>
+
+<p align="center">
+  <b>🎉 v2.0.3 已修复所有已知问题，可放心使用！</b>
+</p>
+
+---
+
+**最后更新**: 2026-02-01 | **版本**: 2.0.3 | **状态**: ✅ 生产就绪
