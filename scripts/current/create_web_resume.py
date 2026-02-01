@@ -140,9 +140,11 @@ def create_web_resume(data: dict, output_path: str, template: str = 'modern') ->
         output_path: Output HTML file path
         template: Template name ('modern' or 'minimal')
     """
-    # Get script directory
-    script_dir = Path(__file__).parent
-    skill_dir = script_dir.parent
+    # Get script directory and skill root directory
+    # __file__ is at: scripts/current/create_web_resume.py
+    # We need to go up two levels to get to skill root
+    script_dir = Path(__file__).parent          # scripts/current/
+    skill_dir = script_dir.parent.parent        # skill root (up two levels)
 
     # Determine section order based on user status
     # If user is fresh graduate, put education before work experience
