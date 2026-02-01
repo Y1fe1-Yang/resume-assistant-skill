@@ -4,19 +4,17 @@
 
 ### 首次使用必需配置
 
-在使用脚本生成简历文件前，必须完成以下配置：
+在使用脚本生成简历文件前，只需安装 Python 依赖：
 
 ```bash
-# 1. 安装Python依赖
+# 安装Python依赖
 pip install fpdf2 python-docx openpyxl
-
-# 2. 下载中文字体（PDF生成必需）
-mkdir -p /tmp/fonts
-curl -L -o /tmp/fonts/NotoSansSC.ttf \
-  "https://github.com/notofonts/noto-cjk/raw/main/Sans/Variable/TTF/Subset/NotoSansSC-VF.ttf"
 ```
 
-**注意**：字体文件约17MB，首次下载需要一些时间。
+**✅ 中文字体已内置**：
+- 本 skill 已包含 Noto Sans SC 中文字体（位于 `assets/fonts/NotoSansSC.ttf`）
+- PDF 生成功能开箱即用，无需手动下载或配置字体
+- 字体大小约 17MB，已包含在 skill 包中
 
 ---
 
@@ -26,52 +24,47 @@ curl -L -o /tmp/fonts/NotoSansSC.ttf \
 
 **错误信息**：
 ```
-FileNotFoundError: TTF Font file not found: /tmp/fonts/NotoSansSC.ttf
+FileNotFoundError: TTF Font file not found
 ```
 
-**原因**：中文字体文件未安装
+**原因**：内置字体文件丢失或 skill 安装不完整
 
-**解决方案**：
+**正常情况**：本 skill 已内置中文字体（`assets/fonts/NotoSansSC.ttf`），通常不会出现此错误。
 
-#### 方法 1: 下载字体到默认路径（推荐）
+**排查步骤**：
+
+#### 步骤 1: 检查内置字体是否存在
 ```bash
-# 创建字体目录
-mkdir -p /tmp/fonts
+# 在 skill 目录下检查
+ls -lh assets/fonts/NotoSansSC.ttf
 
-# 下载 Noto Sans SC 字体
-curl -L -o /tmp/fonts/NotoSansSC.ttf \
+# 应该看到约 17MB 的字体文件
+```
+
+#### 步骤 2: 如果内置字体丢失，重新下载
+```bash
+# 下载字体到 skill 的 assets/fonts 目录
+mkdir -p assets/fonts
+curl -L -o assets/fonts/NotoSansSC.ttf \
   "https://github.com/notofonts/noto-cjk/raw/main/Sans/Variable/TTF/Subset/NotoSansSC-VF.ttf"
-
-# 验证文件存在
-ls -lh /tmp/fonts/NotoSansSC.ttf
 ```
 
-#### 方法 2: 使用系统字体 (Linux)
+#### 步骤 3: 使用自定义字体（可选）
 ```bash
-# 查找系统中的中文字体
-fc-list :lang=zh
-
-# 创建符号链接到系统字体
-mkdir -p /tmp/fonts
-ln -s /usr/share/fonts/truetype/noto/NotoSansSC-Regular.ttf /tmp/fonts/NotoSansSC.ttf
-```
-
-#### 方法 3: 使用自定义字体路径
-```bash
-# 设置环境变量指定字体路径
+# 设置环境变量指定自定义字体路径
 export RESUME_FONT_PATH=/path/to/your/font.ttf
 
 # 运行脚本
 python scripts/current/create_pdf_resume.py --data resume.json
 ```
 
-#### 方法 4: 使用内置字体（中文显示可能不佳）
-如果无法安装字体，脚本会自动回退到内置的 helvetica 字体。虽然可以生成 PDF，但中文字符显示效果可能不理想。脚本会显示警告信息并继续执行。
+#### 步骤 4: Fallback 模式（最后手段）
+如果以上方法都失败，脚本会自动回退到内置的 helvetica 字体。虽然可以生成 PDF，但中文字符会显示为占位符。脚本会显示警告信息并继续执行。
 
 **注意**：
-- 字体文件约 17MB，首次下载需要一些时间
-- 使用内置字体不需要下载，但中文显示效果不佳
-- 推荐使用方法 1 以获得最佳中文显示效果
+- 内置字体已包含，正常情况下不需要手动配置
+- 如果遇到此错误，说明 skill 安装可能不完整
+- 建议重新安装 skill 或手动下载字体到 `assets/fonts/` 目录
 
 ### 2. PDF生成失败："Not a TrueType font"
 

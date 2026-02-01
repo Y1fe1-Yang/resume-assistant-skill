@@ -31,8 +31,14 @@ class ResumePDF(FPDF):
         font_loaded = False
         font_name = 'NotoSans'
 
-        # List of potential font paths to try
+        # Get bundled font path (in skill's assets/fonts directory)
+        script_dir = Path(__file__).parent          # scripts/current/
+        skill_dir = script_dir.parent.parent        # skill root
+        bundled_font = skill_dir / 'assets' / 'fonts' / 'NotoSansSC.ttf'
+
+        # List of potential font paths to try (bundled font has highest priority)
         font_paths = [
+            str(bundled_font) if bundled_font.exists() else None,  # Bundled font (highest priority)
             os.getenv('RESUME_FONT_PATH'),  # Environment variable
             '/tmp/fonts/NotoSansSC.ttf',     # Default path
             str(Path.home() / '.fonts' / 'NotoSansSC.ttf'),  # User fonts
@@ -55,13 +61,13 @@ class ResumePDF(FPDF):
         if not font_loaded:
             # Fallback mode: No Chinese font available
             print("⚠️  WARNING: Chinese font not found!")
+            print("   This is unexpected - the font should be bundled in assets/fonts/")
             print("   PDF will be generated with limited character support.")
-            print("   Chinese characters will be replaced with '?' marks.")
+            print("   Chinese characters will be replaced with placeholders.")
             print()
-            print("   To fix this, install Noto Sans SC font:")
-            print("   1. mkdir -p /tmp/fonts")
-            print("   2. curl -L -o /tmp/fonts/NotoSansSC.ttf \\")
-            print("      https://github.com/notofonts/noto-cjk/raw/main/Sans/Variable/TTF/Subset/NotoSansSC-VF.ttf")
+            print("   Troubleshooting:")
+            print(f"   1. Check bundled font: {bundled_font}")
+            print("   2. Verify skill installation is complete")
             print("   3. Or set RESUME_FONT_PATH=/path/to/your/font.ttf")
             print()
             print("   See references/troubleshooting.md for more details.\n")
