@@ -1,0 +1,103 @@
+{
+  "name": "张伟",
+  "title": "Java后端开发工程师",
+  "phone": "138-0000-1234",
+  "email": "zhangwei@example.com",
+  "location": "北京市朝阳区",
+  "is_fresh_graduate": true,
+  "summary": "北京大学计算机科学与技术专业应届毕业生，具有扎实的编程基础和系统设计能力。熟练掌握Java、Spring Boot等技术栈，有多个完整项目开发经验。热爱技术，学习能力强，注重代码质量，期待加入优秀团队共同成长。",
+  "education": [
+    {
+      "school": "北京大学",
+      "degree": "本科",
+      "major": "计算机科学与技术",
+      "startDate": "2020.09",
+      "endDate": "2024.06",
+      "gpa": "3.8/4.0"
+    }
+  ],
+  "projects": [
+    {
+      "name": "分布式电商系统",
+      "role": "后端负责人",
+      "date": "2023.09 - 2024.01",
+      "tech": ["Spring Boot", "MyBatis", "Redis", "RabbitMQ", "MySQL", "Docker"],
+      "details": [
+        "负责订单、支付、库存等核心模块的设计与开发，支持10万+日活用户",
+        "使用Redis实现分布式锁和缓存，将热点商品查询响应时间从500ms降至50ms",
+        "设计并实现基于RabbitMQ的异步消息处理机制，提升系统吞吐量30%",
+        "编写单元测试和集成测试，测试覆盖率达85%，保证代码质量"
+      ]
+    },
+    {
+      "name": "智能问答社区平台",
+      "role": "全栈开发工程师",
+      "date": "2023.03 - 2023.08",
+      "tech": ["Spring Boot", "Vue.js", "Elasticsearch", "MySQL"],
+      "details": [
+        "独立完成用户、问答、评论、点赞等核心功能的前后端开发",
+        "使用Elasticsearch实现全文检索功能，支持高亮显示和模糊匹配",
+        "设计并实现积分系统和用户成就体系，提升用户活跃度40%",
+        "平台上线后服务3000+校内用户，累计问答内容5000+条"
+      ]
+    },
+    {
+      "name": "在线代码评测系统",
+      "role": "核心开发者",
+      "date": "2022.10 - 2023.02",
+      "tech": ["Java", "Docker", "Linux", "MySQL"],
+      "details": [
+        "实现代码沙箱环境，支持C++、Java、Python等多种语言的代码编译和运行",
+        "设计资源限制机制（内存、时间、磁盘），防止恶意代码攻击",
+        "优化判题队列调度算法，将平均判题时间从10秒降至3秒",
+        "系统支撑了数据结构与算法课程的在线作业提交，服务500+学生"
+      ]
+    }
+  ],
+  "experience": [
+    {
+      "company": "字节跳动",
+      "position": "后端开发实习生",
+      "startDate": "2023.06",
+      "endDate": "2023.09",
+      "achievements": [
+        "参与抖音推荐系统的特征工程优化，提升模型准确率2%",
+        "负责用户行为数据的实时处理pipeline开发，日处理数据量10亿+",
+        "优化Kafka消费者逻辑，降低消息积压延迟50%"
+      ]
+    }
+  ],
+  "skills": [
+    {
+      "category": "编程语言",
+      "items": "Java, Python, Go, JavaScript, SQL"
+    },
+    {
+      "category": "框架技术",
+      "items": "Spring Boot, Spring Cloud, MyBatis, Vue.js, React"
+    },
+    {
+      "category": "数据库",
+      "items": "MySQL, Redis, MongoDB, Elasticsearch"
+    },
+    {
+      "category": "中间件",
+      "items": "RabbitMQ, Kafka, Nginx"
+    },
+    {
+      "category": "开发工具",
+      "items": "Git, Docker, Maven, IDEA, Linux"
+    },
+    {
+      "category": "英语能力",
+      "items": "CET-6 (580分), 能够流畅阅读英文技术文档"
+    }
+  ],
+  "other": [
+    "获得ACM-ICPC区域赛银奖 (2022)",
+    "获得国家奖学金 (2022-2023学年)",
+    "担任计算机系学生会技术部部长，组织多场技术分享活动",
+    "GitHub开源项目累计star数1000+，参与多个知名开源项目贡献",
+    "LeetCode刷题600+，算法竞赛rating 2100+"
+  ]
+}

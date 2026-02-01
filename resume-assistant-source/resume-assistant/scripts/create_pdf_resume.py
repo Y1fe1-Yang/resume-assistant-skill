@@ -13,6 +13,7 @@ from pathlib import Path
 
 try:
     from fpdf import FPDF
+    from fpdf.enums import XPos, YPos
 except ImportError:
     print("Error: fpdf2 is required. Install with: pip install fpdf2")
     sys.exit(1)
@@ -33,18 +34,18 @@ class ResumePDF(FPDF):
         # Name
         self.set_font('NotoSans', '', 24)
         self.set_text_color(31, 41, 55)
-        self.cell(0, 10, name, align='C', ln=True)
+        self.cell(0, 10, name, align='C', new_x=XPos.LMARGIN, new_y=YPos.NEXT)
 
         # Title
         if title:
             self.set_font('NotoSans', '', 12)
             self.set_text_color(107, 114, 128)
-            self.cell(0, 7, title, align='C', ln=True)
+            self.cell(0, 7, title, align='C', new_x=XPos.LMARGIN, new_y=YPos.NEXT)
 
         # Contact
         if contact:
             self.set_font('NotoSans', '', 9)
-            self.cell(0, 6, contact, align='C', ln=True)
+            self.cell(0, 6, contact, align='C', new_x=XPos.LMARGIN, new_y=YPos.NEXT)
 
         self.ln(3)
 
@@ -52,7 +53,7 @@ class ResumePDF(FPDF):
         """Add a section title."""
         self.set_font('NotoSans', '', 14)
         self.set_text_color(37, 99, 235)
-        self.cell(0, 8, title, ln=True)
+        self.cell(0, 8, title, new_x=XPos.LMARGIN, new_y=YPos.NEXT)
         self.ln(2)
 
     def entry_title(self, title, date=''):
@@ -68,9 +69,9 @@ class ResumePDF(FPDF):
             # Date on the right
             self.set_x(self.w - self.r_margin - self.get_string_width(date))
             self.set_text_color(107, 114, 128)
-            self.cell(0, 6, date, ln=True)
+            self.cell(0, 6, date, new_x=XPos.LMARGIN, new_y=YPos.NEXT)
         else:
-            self.cell(0, 6, title, ln=True)
+            self.cell(0, 6, title, new_x=XPos.LMARGIN, new_y=YPos.NEXT)
 
         self.set_text_color(31, 41, 55)
 

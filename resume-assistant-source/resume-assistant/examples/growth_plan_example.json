@@ -1,0 +1,201 @@
+{
+  "target_position": "字节跳动 - 后端开发工程师",
+  "current_level": "应届毕业生，有实习经验但项目经验不足",
+  "timeline": "6个月",
+  "current_match_score": "6/10",
+  "target_match_score": "8/10",
+  "gaps": {
+    "critical": [
+      "缺少高并发系统设计经验",
+      "微服务架构实践不足"
+    ],
+    "important": [
+      "分布式系统理论知识薄弱",
+      "性能优化经验不足"
+    ],
+    "nice_to_have": [
+      "云原生技术了解不深",
+      "开源贡献较少"
+    ]
+  },
+  "phases": [
+    {
+      "phase": "第1-2个月",
+      "title": "基础提升 + 理论补充",
+      "goals": [
+        "深入学习分布式系统理论",
+        "掌握微服务架构设计模式",
+        "学习常见性能优化方法"
+      ],
+      "tasks": [
+        {
+          "task": "学习《深入理解Java虚拟机》（JVM调优篇）",
+          "deadline": "第2周",
+          "resources": [
+            "《深入理解Java虚拟机》第三版",
+            "极客时间 - JVM实战课程"
+          ],
+          "deliverable": "完成JVM参数调优笔记，总结常见问题排查方法"
+        },
+        {
+          "task": "学习微服务架构设计模式",
+          "deadline": "第4周",
+          "resources": [
+            "《微服务架构设计模式》",
+            "Spring Cloud官方文档"
+          ],
+          "deliverable": "实现一个包含5个微服务的Demo系统"
+        },
+        {
+          "task": "学习分布式系统理论（CAP、BASE、Raft等）",
+          "deadline": "第6周",
+          "resources": [
+            "MIT 6.824 分布式系统课程",
+            "《数据密集型应用系统设计》"
+          ],
+          "deliverable": "完成课程Lab实验，理解Raft算法"
+        },
+        {
+          "task": "学习MySQL性能优化",
+          "deadline": "第8周",
+          "resources": [
+            "《高性能MySQL》",
+            "极客时间 - MySQL实战45讲"
+          ],
+          "deliverable": "总结慢查询优化案例，完成索引优化练习"
+        }
+      ],
+      "milestone": "能够独立设计一个简单的微服务系统架构，理解常见性能问题的排查和优化方法"
+    },
+    {
+      "phase": "第3-4个月",
+      "title": "实战项目 + 高并发实践",
+      "goals": [
+        "构建高并发秒杀系统",
+        "实践分布式事务解决方案",
+        "掌握系统性能压测方法"
+      ],
+      "tasks": [
+        {
+          "task": "实现秒杀系统（包含限流、降级、缓存等）",
+          "deadline": "第12周",
+          "resources": [
+            "《亿级流量网站架构核心技术》",
+            "Redis官方文档",
+            "参考开源秒杀项目"
+          ],
+          "deliverable": "完整的秒杀系统，支持10万QPS，有完整的监控和告警"
+        },
+        {
+          "task": "学习并实践分布式事务（Seata）",
+          "deadline": "第14周",
+          "resources": [
+            "Seata官方文档",
+            "分布式事务最佳实践"
+          ],
+          "deliverable": "在秒杀系统中实现分布式事务保证"
+        },
+        {
+          "task": "性能压测与优化",
+          "deadline": "第16周",
+          "resources": [
+            "JMeter使用教程",
+            "Prometheus + Grafana监控"
+          ],
+          "deliverable": "完成系统压测报告，找出并优化3个以上性能瓶颈"
+        }
+      ],
+      "milestone": "拥有一个完整的高并发系统项目，能够讲清楚系统设计思路和优化过程"
+    },
+    {
+      "phase": "第5-6个月",
+      "title": "开源贡献 + 面试准备",
+      "goals": [
+        "为知名开源项目贡献代码",
+        "系统性准备算法和系统设计面试",
+        "完善简历和作品集"
+      ],
+      "tasks": [
+        {
+          "task": "为Spring Cloud或Dubbo提交PR",
+          "deadline": "第20周",
+          "resources": [
+            "项目GitHub Issues",
+            "开源贡献指南"
+          ],
+          "deliverable": "至少1个被合并的PR"
+        },
+        {
+          "task": "LeetCode刷题300题（中等100+困难50+）",
+          "deadline": "第22周",
+          "resources": [
+            "LeetCode题库",
+            "《剑指Offer》"
+          ],
+          "deliverable": "完成题解笔记，总结常见算法模板"
+        },
+        {
+          "task": "系统设计题练习（20个场景）",
+          "deadline": "第24周",
+          "resources": [
+            "《系统设计面试题精讲》",
+            "ByteByteGo YouTube频道"
+          ],
+          "deliverable": "能够在45分钟内设计出常见系统架构"
+        },
+        {
+          "task": "优化简历，准备项目讲解话术",
+          "deadline": "第24周",
+          "resources": [
+            "面试经验分享",
+            "模拟面试"
+          ],
+          "deliverable": "能够流畅讲解每个项目的背景、方案、结果"
+        }
+      ],
+      "milestone": "算法能力达到面试要求，能够设计常见系统架构，简历和项目经历打磨完成"
+    }
+  ],
+  "success_criteria": {
+    "technical": [
+      "能够独立设计高并发系统架构",
+      "理解并实践过微服务、分布式事务",
+      "有完整的性能优化实战经验",
+      "算法题正确率80%+"
+    ],
+    "project": [
+      "有至少1个高质量的高并发系统项目",
+      "有开源贡献记录",
+      "项目能够清晰讲解，经得起深挖"
+    ],
+    "interview": [
+      "通过3次以上模拟面试",
+      "系统设计题能够给出合理方案",
+      "对简历上的每个项目都能深入讲解"
+    ]
+  },
+  "backup_plan": {
+    "reason": "如果6个月后仍未达到目标",
+    "options": [
+      {
+        "option": "降低目标公司",
+        "description": "先加入二线互联网公司积累经验，1-2年后再跳槽"
+      },
+      {
+        "option": "延长准备时间",
+        "description": "再准备3个月，深化项目经验和系统设计能力"
+      },
+      {
+        "option": "考虑其他岗位",
+        "description": "如果后端竞争激烈，可以考虑大数据开发、云计算等相关方向"
+      }
+    ]
+  },
+  "weekly_time_allocation": {
+    "theory_learning": "10小时",
+    "coding_practice": "15小时",
+    "project_development": "10小时",
+    "interview_preparation": "5小时",
+    "total": "40小时/周"
+  }
+}
