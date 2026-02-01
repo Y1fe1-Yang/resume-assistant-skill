@@ -70,3 +70,6 @@ COMMIT_*.md
 *_private.json
 *_confidential.json
 my_resume_*.json
+
+# Skill package files (should be in GitHub Release, not in repo)
+*.skill
