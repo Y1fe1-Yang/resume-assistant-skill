@@ -1,0 +1,43 @@
+{
+  "name": "resume-assistant",
+  "version": "2.1.0",
+  "description": "智能简历助手,通过五个AI代理提供全流程求职支持:(1)故事挖掘-发现经历亮点;(2)职位推荐-匹配合适岗位;(3)简历优化-针对JD定制内容;(4)模拟面试-实战演练与反馈;(5)能力提升-差距分析与计划",
+  "author": "Y1fe1-Yang",
+  "repository": "https://github.com/Y1fe1-Yang/resume-assistant-skill",
+  "license": "MIT",
+  "tags": [
+    "resume",
+    "career",
+    "job-search",
+    "chinese",
+    "interview",
+    "planning",
+    "ai-assistant",
+    "productivity"
+  ],
+  "category": "productivity",
+  "skill_file": "resume-assistant-skill.skill",
+  "requires": {
+    "python_packages": [
+      "fpdf2",
+      "python-docx",
+      "openpyxl"
+    ],
+    "external_resources": [
+      "NotoSansSC font (for PDF generation)"
+    ]
+  },
+  "documentation": {
+    "main": "SKILL.md",
+    "usage": "examples/USAGE_GUIDE.md",
+    "troubleshooting": "references/troubleshooting.md",
+    "data_formats": "references/data-formats.md"
+  },
+  "features": [
+    "Story Mining Agent - Discover overlooked experiences",
+    "Job Recommendation Agent - Match suitable positions",
+    "Resume Optimization Agent - Tailor content to JD",
+    "Mock Interview Agent - Practice with feedback",
+    "Growth Planning Agent - Skill gap analysis"
+  ]
+}
