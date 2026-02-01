@@ -2,6 +2,30 @@
 
 All notable changes to this project will be documented in this file.
 
+## [v2.0.3] - 2026-02-01
+
+### Fixed
+- **DOCX字体统一性问题** (P0): 完全重写DOCX生成代码，统一所有字体大小和样式
+  - 姓名: 16pt
+  - 章节标题: 14pt
+  - 副标题（公司/项目名）: 11pt
+  - 正文: 10.5pt
+  - 辅助信息（日期/联系方式）: 9pt
+- **中文字体渲染问题**: 使用 `qn('w:eastAsia')` 显式设置中文字体（微软雅黑），确保中文字符渲染一致
+- **样式混用问题**: 移除 `style="List Bullet"` 依赖，改用手动设置字体，避免Word样式冲突
+
+### Improved
+- 引入字体大小常量（FONT_SIZE_*）统一管理
+- 添加 `set_chinese_font()` 辅助函数确保字体一致性
+- 所有文本元素均使用 Unicode 子弹符号（•）而非样式
+- 改进代码可读性和可维护性，添加详细注释
+
+### Technical Details
+- 修改文件: create_docx_resume.py（完全重写）
+- 新增功能: 显式中文字体设置、统一字体常量系统
+- 向后兼容: 完全兼容，无破坏性变更
+- 测试结果: ✅ 所有字体大小符合预期，视觉效果整齐统一
+
 ## [v2.0.2] - 2026-02-01
 
 ### Fixed
