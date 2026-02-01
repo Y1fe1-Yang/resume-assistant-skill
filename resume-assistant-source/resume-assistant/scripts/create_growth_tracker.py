@@ -69,6 +69,15 @@ def create_overview_sheet(wb: openpyxl.Workbook, plan_data: dict):
     ws['A1'].font = title_font
     ws.merge_cells('A1:E1')
 
+    # Parse timeline (支持"3个月"、"12周"等格式)
+    timeline = plan_data.get('timeline', '')
+    duration_weeks = 12  # default
+    if '个月' in timeline:
+        months = int(''.join(filter(str.isdigit, timeline)))
+        duration_weeks = months * 4
+    elif '周' in timeline:
+        duration_weeks = int(''.join(filter(str.isdigit, timeline)))
+
     # Basic info
     row = 3
     ws[f'A{row}'] = '目标职位'
@@ -77,23 +86,23 @@ def create_overview_sheet(wb: openpyxl.Workbook, plan_data: dict):
     row += 1
 
     ws[f'A{row}'] = '计划时长'
-    ws[f'B{row}'] = f"{plan_data.get('duration_weeks', 0)} 周"
+    ws[f'B{row}'] = f"{duration_weeks} 周"
     ws[f'A{row}'].font = header_font
     row += 1
 
     ws[f'A{row}'] = '开始日期'
-    ws[f'B{row}'] = plan_data.get('start_date', datetime.now().strftime('%Y-%m-%d'))
+    ws[f'B{row}'] = datetime.now().strftime('%Y-%m-%d')
     ws[f'A{row}'].font = header_font
     row += 2
 
     # Current match rate
     ws[f'A{row}'] = '当前匹配度'
-    ws[f'B{row}'] = f"{plan_data.get('current_match', 0)}/10"
+    ws[f'B{row}'] = f"0/10"
     ws[f'A{row}'].font = header_font
     row += 1
 
     ws[f'A{row}'] = '目标匹配度'
-    ws[f'B{row}'] = f"{plan_data.get('target_match', 8)}/10"
+    ws[f'B{row}'] = f"8/10"
     ws[f'A{row}'].font = header_font
     row += 2
 
@@ -105,8 +114,14 @@ def create_overview_sheet(wb: openpyxl.Workbook, plan_data: dict):
     phases = plan_data.get('phases', [])
     for i, phase in enumerate(phases, 1):
         ws[f'A{row}'] = f"阶段{i}"
-        ws[f'B{row}'] = phase.get('name', '')
-        ws[f'C{row}'] = f"第{phase.get('weeks', '')}周"
+        # 支持新格式的phase/title字段
+        phase_name = phase.get('title', phase.get('phase', ''))
+        ws[f'B{row}'] = phase_name
+        # 根据阶段数量计算周数
+        weeks_per_phase = duration_weeks // len(phases) if phases else 4
+        start_week = (i-1) * weeks_per_phase + 1
+        end_week = i * weeks_per_phase
+        ws[f'C{row}'] = f"第{start_week}-{end_week}周"
         row += 1
 
     # Set column widths
@@ -116,12 +131,14 @@ def create_overview_sheet(wb: openpyxl.Workbook, plan_data: dict):
 
 
 def create_weekly_tracker_sheet(wb: openpyxl.Workbook, plan_data: dict):
-    """Create weekly task tracking sheet."""
+    """Create weekly task tracking sheet with detailed daily breakdowns."""
     ws = wb.create_sheet("每周任务")
 
     # Styles
     header_fill = PatternFill(start_color="4472C4", end_color="4472C4", fill_type="solid")
     header_font = Font(color="FFFFFF", bold=True)
+    phase_fill = PatternFill(start_color="D9E1F2", end_color="D9E1F2", fill_type="solid")
+    task_fill = PatternFill(start_color="E7E6E6", end_color="E7E6E6", fill_type="solid")
     border = Border(
         left=Side(style='thin'),
         right=Side(style='thin'),
@@ -130,7 +147,7 @@ def create_weekly_tracker_sheet(wb: openpyxl.Workbook, plan_data: dict):
     )
 
     # Headers
-    headers = ['周次', '阶段', '任务', '预计时间', '完成状态', '备注']
+    headers = ['周次', '阶段', '主任务', '具体行动项', '预计工时', '截止日期', '完成状态', '实际用时', '备注']
     for col, header in enumerate(headers, 1):
         cell = ws.cell(row=1, column=col, value=header)
         cell.font = header_font
@@ -142,42 +159,191 @@ def create_weekly_tracker_sheet(wb: openpyxl.Workbook, plan_data: dict):
     row = 2
     phases = plan_data.get('phases', [])
 
-    for phase in phases:
-        phase_name = phase.get('name', '')
-        weeks_range = phase.get('weeks', '1-4')
+    # Parse timeline for week calculation
+    timeline = plan_data.get('timeline', '12周')
+    duration_weeks = 12
+    if '个月' in timeline:
+        months = int(''.join(filter(str.isdigit, timeline)))
+        duration_weeks = months * 4
+    elif '周' in timeline:
+        duration_weeks = int(''.join(filter(str.isdigit, timeline)))
 
+    weeks_per_phase = duration_weeks // len(phases) if phases else 4
+
+    for phase_idx, phase in enumerate(phases, 1):
+        # 支持新格式
+        phase_name = phase.get('title', phase.get('phase', ''))
+        start_week = (phase_idx-1) * weeks_per_phase + 1
+        end_week = phase_idx * weeks_per_phase
+
+        # 支持新格式的tasks
         for task in phase.get('tasks', []):
-            ws.cell(row=row, column=1, value=weeks_range)
-            ws.cell(row=row, column=2, value=phase_name)
-            ws.cell(row=row, column=3, value=task.get('name', ''))
-            ws.cell(row=row, column=4, value=f"{task.get('hours', 0)}小时/周")
-            ws.cell(row=row, column=5, value='☐ 未完成')
-            ws.cell(row=row, column=6, value='')
+            task_name = task.get('task', task.get('name', ''))
+            deadline = task.get('deadline', '')
 
-            # Apply borders
-            for col in range(1, 7):
-                ws.cell(row=row, column=col).border = border
+            # 分解任务为具体行动项
+            subtasks = _break_down_task(task_name, weeks_per_phase)
 
+            for week_offset, subtask_info in enumerate(subtasks):
+                current_week = start_week + week_offset
+                if current_week > end_week:
+                    break
+
+                ws.cell(row=row, column=1, value=f"第{current_week}周")
+                ws.cell(row=row, column=2, value=phase_name if week_offset == 0 else '')
+                ws.cell(row=row, column=3, value=task_name if week_offset == 0 else '')
+                ws.cell(row=row, column=4, value=subtask_info['action'])
+                ws.cell(row=row, column=5, value=subtask_info['hours'])
+                ws.cell(row=row, column=6, value=subtask_info['deadline'])
+                ws.cell(row=row, column=7, value='☐ 未完成')
+                ws.cell(row=row, column=8, value='')
+                ws.cell(row=row, column=9, value='')
+
+                # Apply styling
+                if week_offset == 0:
+                    ws.cell(row=row, column=2).fill = phase_fill
+                    ws.cell(row=row, column=3).fill = task_fill
+
+                # Apply borders
+                for col in range(1, 10):
+                    ws.cell(row=row, column=col).border = border
+
+                row += 1
+
+            # 添加空行分隔不同任务
             row += 1
 
     # Set column widths
     ws.column_dimensions['A'].width = 10
-    ws.column_dimensions['B'].width = 15
-    ws.column_dimensions['C'].width = 40
-    ws.column_dimensions['D'].width = 15
-    ws.column_dimensions['E'].width = 12
-    ws.column_dimensions['F'].width = 30
+    ws.column_dimensions['B'].width = 18
+    ws.column_dimensions['C'].width = 30
+    ws.column_dimensions['D'].width = 45
+    ws.column_dimensions['E'].width = 10
+    ws.column_dimensions['F'].width = 12
+    ws.column_dimensions['G'].width = 12
+    ws.column_dimensions['H'].width = 10
+    ws.column_dimensions['I'].width = 30
 
     # Add instructions
     row += 2
     ws.cell(row=row, column=1, value='使用说明：')
     ws.cell(row=row, column=1).font = Font(bold=True)
     row += 1
-    ws.cell(row=row, column=1, value='1. 完成任务后，在"完成状态"列改为 ✓ 已完成')
+    ws.cell(row=row, column=1, value='1. 每天完成具体行动项后，在"完成状态"列改为 ✓ 已完成，并记录实际用时')
     row += 1
-    ws.cell(row=row, column=1, value='2. 在"备注"列记录遇到的问题或心得')
+    ws.cell(row=row, column=1, value='2. 在"备注"列记录学习要点、遇到的问题、解决方案')
     row += 1
-    ws.cell(row=row, column=1, value='3. 建议每周日回顾并更新进度')
+    ws.cell(row=row, column=1, value='3. 预计工时仅供参考，根据实际情况调整')
+    row += 1
+    ws.cell(row=row, column=1, value='4. 建议每周日回顾本周进度，规划下周任务')
+
+
+def _break_down_task(task_name: str, weeks_available: int) -> list:
+    """
+    将主任务分解为具体的周度行动项。
+
+    Args:
+        task_name: 主任务名称
+        weeks_available: 可用的周数
+
+    Returns:
+        包含具体行动项的列表，每项包含action、hours、deadline
+    """
+    subtasks = []
+
+    # 根据任务类型进行智能分解
+    task_lower = task_name.lower()
+
+    # 学习类任务
+    if any(kw in task_lower for kw in ['学习', '掌握', '了解', '课程', 'learn']):
+        if weeks_available >= 3:
+            subtasks = [
+                {'action': '📚 理论学习：观看课程前1/3内容，做笔记（每天1-2小时）',
+                 'hours': '7-10h', 'deadline': '本周五'},
+                {'action': '💻 实践练习：完成配套练习题，搭建基础环境',
+                 'hours': '8-12h', 'deadline': '下周三'},
+                {'action': '🔧 项目实战：参照教程完成1个小项目，理解核心概念',
+                 'hours': '10-15h', 'deadline': '第3周日'},
+            ]
+        elif weeks_available == 2:
+            subtasks = [
+                {'action': '📚 集中学习：完整观看课程视频，整理核心知识点',
+                 'hours': '10-15h', 'deadline': '本周日'},
+                {'action': '💻 实战练习：完成至少3个练习案例，建立肌肉记忆',
+                 'hours': '8-12h', 'deadline': '下周日'},
+            ]
+        else:
+            subtasks = [
+                {'action': '⚡ 快速上手：观看核心章节，完成基础练习',
+                 'hours': '10-15h', 'deadline': '本周日'},
+            ]
+
+    # 项目类任务
+    elif any(kw in task_lower for kw in ['项目', '开发', '实现', '构建', 'project', 'build']):
+        if weeks_available >= 3:
+            subtasks = [
+                {'action': '📋 需求分析与设计：确定功能范围，画出架构图和流程图',
+                 'hours': '4-6h', 'deadline': '本周三'},
+                {'action': '🏗️ 核心功能开发：实现主要业务逻辑（MVP版本）',
+                 'hours': '12-16h', 'deadline': '第2周日'},
+                {'action': '✨ 完善与优化：添加边界处理、错误提示、UI优化',
+                 'hours': '8-10h', 'deadline': '第3周五'},
+                {'action': '📝 文档与部署：编写README、测试文档，部署上线',
+                 'hours': '4-6h', 'deadline': '第3周日'},
+            ]
+        elif weeks_available == 2:
+            subtasks = [
+                {'action': '📋 设计与搭建：确定技术栈，搭建项目框架',
+                 'hours': '6-8h', 'deadline': '本周五'},
+                {'action': '🏗️ 功能实现：完成核心功能开发和基础测试',
+                 'hours': '12-15h', 'deadline': '下周日'},
+            ]
+        else:
+            subtasks = [
+                {'action': '⚡ 快速搭建：参考现有项目，实现核心demo',
+                 'hours': '10-12h', 'deadline': '本周日'},
+            ]
+
+    # 阅读类任务
+    elif any(kw in task_lower for kw in ['阅读', '研读', '文档', '书籍', 'read', 'book']):
+        if weeks_available >= 2:
+            subtasks = [
+                {'action': '📖 通读全书：每天30-60分钟，完成第一遍阅读',
+                 'hours': '8-10h', 'deadline': '第1周日'},
+                {'action': '✍️ 精读与笔记：重点章节做详细笔记，整理思维导图',
+                 'hours': '6-8h', 'deadline': '第2周日'},
+            ]
+        else:
+            subtasks = [
+                {'action': '📖 重点阅读：聚焦核心章节，提炼关键知识点',
+                 'hours': '8-10h', 'deadline': '本周日'},
+            ]
+
+    # 练习类任务
+    elif any(kw in task_lower for kw in ['练习', '刷题', '题目', 'practice', 'exercise']):
+        subtasks = [
+            {'action': '🎯 基础题（Easy）：每天2-3题，熟悉基本概念',
+             'hours': '5-7h', 'deadline': '本周日'},
+            {'action': '🎯 进阶题（Medium）：每天1-2题，提升解题能力',
+             'hours': '6-8h', 'deadline': '下周日'},
+        ]
+
+    # 默认通用分解
+    else:
+        if weeks_available >= 2:
+            subtasks = [
+                {'action': f'🚀 启动阶段：{task_name} - 准备工作和基础搭建',
+                 'hours': '6-8h', 'deadline': '本周日'},
+                {'action': f'⚡ 执行阶段：{task_name} - 核心工作完成',
+                 'hours': '8-12h', 'deadline': '下周日'},
+            ]
+        else:
+            subtasks = [
+                {'action': f'⚡ {task_name} - 集中完成',
+                 'hours': '10-15h', 'deadline': '本周日'},
+            ]
+
+    return subtasks
 
 
 def create_milestones_sheet(wb: openpyxl.Workbook, plan_data: dict):
@@ -203,27 +369,43 @@ def create_milestones_sheet(wb: openpyxl.Workbook, plan_data: dict):
         cell.alignment = Alignment(horizontal='center', vertical='center')
         cell.border = border
 
-    # Milestones
+    # Milestones - 从phases中提取milestone
     row = 2
-    milestones = plan_data.get('milestones', [])
+    phases = plan_data.get('phases', [])
 
-    for milestone in milestones:
-        ws.cell(row=row, column=1, value=f"第{milestone.get('week', '')}周")
-        ws.cell(row=row, column=2, value=milestone.get('goal', ''))
-        ws.cell(row=row, column=3, value=milestone.get('criteria', ''))
-        ws.cell(row=row, column=4, value='☐ 未达成')
-        ws.cell(row=row, column=5, value='')
+    # Parse timeline
+    timeline = plan_data.get('timeline', '12周')
+    duration_weeks = 12
+    if '个月' in timeline:
+        months = int(''.join(filter(str.isdigit, timeline)))
+        duration_weeks = months * 4
+    elif '周' in timeline:
+        duration_weeks = int(''.join(filter(str.isdigit, timeline)))
 
-        # Apply borders
-        for col in range(1, 6):
-            ws.cell(row=row, column=col).border = border
+    weeks_per_phase = duration_weeks // len(phases) if phases else 4
 
-        row += 1
+    for phase_idx, phase in enumerate(phases, 1):
+        milestone_text = phase.get('milestone', '')
+        if milestone_text:
+            week_num = phase_idx * weeks_per_phase
+            phase_name = phase.get('title', phase.get('phase', ''))
+
+            ws.cell(row=row, column=1, value=f"第{week_num}周")
+            ws.cell(row=row, column=2, value=phase_name)
+            ws.cell(row=row, column=3, value=milestone_text)
+            ws.cell(row=row, column=4, value='☐ 未达成')
+            ws.cell(row=row, column=5, value='')
+
+            # Apply borders
+            for col in range(1, 6):
+                ws.cell(row=row, column=col).border = border
+
+            row += 1
 
     # Set column widths
     ws.column_dimensions['A'].width = 12
     ws.column_dimensions['B'].width = 30
-    ws.column_dimensions['C'].width = 40
+    ws.column_dimensions['C'].width = 50
     ws.column_dimensions['D'].width = 12
     ws.column_dimensions['E'].width = 15
 
@@ -243,7 +425,7 @@ def create_resources_sheet(wb: openpyxl.Workbook, plan_data: dict):
     )
 
     # Headers
-    headers = ['技能/领域', '资源类型', '资源名称', '链接/说明', '优先级']
+    headers = ['阶段', '任务', '资源名称', '类型', '优先级']
     for col, header in enumerate(headers, 1):
         cell = ws.cell(row=1, column=col, value=header)
         cell.font = header_font
@@ -251,28 +433,41 @@ def create_resources_sheet(wb: openpyxl.Workbook, plan_data: dict):
         cell.alignment = Alignment(horizontal='center', vertical='center')
         cell.border = border
 
-    # Resources
+    # Resources - 从phases的tasks中提取resources
     row = 2
-    resources = plan_data.get('resources', [])
+    phases = plan_data.get('phases', [])
 
-    for resource in resources:
-        ws.cell(row=row, column=1, value=resource.get('skill', ''))
-        ws.cell(row=row, column=2, value=resource.get('type', ''))
-        ws.cell(row=row, column=3, value=resource.get('name', ''))
-        ws.cell(row=row, column=4, value=resource.get('link', ''))
-        ws.cell(row=row, column=5, value=resource.get('priority', ''))
+    for phase in phases:
+        phase_name = phase.get('title', phase.get('phase', ''))
+        tasks = phase.get('tasks', [])
 
-        # Apply borders
-        for col in range(1, 6):
-            ws.cell(row=row, column=col).border = border
+        for task in tasks:
+            task_name = task.get('task', task.get('name', ''))
+            resources = task.get('resources', [])
 
-        row += 1
+            for resource in resources:
+                ws.cell(row=row, column=1, value=phase_name)
+                ws.cell(row=row, column=2, value=task_name)
+                ws.cell(row=row, column=3, value=resource)
+                # 根据资源名称推断类型
+                resource_type = '在线课程' if 'Udemy' in resource or 'Coursera' in resource else \
+                               '书籍' if '《' in resource else \
+                               '视频' if 'B站' in resource or 'YouTube' in resource else \
+                               '文档'
+                ws.cell(row=row, column=4, value=resource_type)
+                ws.cell(row=row, column=5, value='高')
+
+                # Apply borders
+                for col in range(1, 6):
+                    ws.cell(row=row, column=col).border = border
+
+                row += 1
 
     # Set column widths
-    ws.column_dimensions['A'].width = 15
-    ws.column_dimensions['B'].width = 12
-    ws.column_dimensions['C'].width = 30
-    ws.column_dimensions['D'].width = 50
+    ws.column_dimensions['A'].width = 20
+    ws.column_dimensions['B'].width = 50
+    ws.column_dimensions['C'].width = 50
+    ws.column_dimensions['D'].width = 12
     ws.column_dimensions['E'].width = 10
 
 

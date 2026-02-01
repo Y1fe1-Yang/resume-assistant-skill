@@ -157,7 +157,7 @@ def add_experience_entry(doc: Document, exp: dict) -> None:
     if exp.get("position"):
         header.add_run(" | ")
         position_run = header.add_run(exp["position"])
-        position_run.font.size = Pt(11)
+        position_run.font.size = Pt(10)
 
     if exp.get("startDate") or exp.get("endDate"):
         # Add tab and date on the right
@@ -186,6 +186,7 @@ def add_project_entry(doc: Document, proj: dict) -> None:
         header.add_run(" | ")
         role_run = header.add_run(proj["role"])
         role_run.font.size = Pt(10)
+        role_run.font.color.rgb = RGBColor(102, 102, 102)
 
     if proj.get("date"):
         header.add_run("\t")
@@ -220,6 +221,7 @@ def add_education_entry(doc: Document, edu: dict) -> None:
         degree_text = f"{edu.get('degree', '')} · {edu.get('major', '')}"
         degree_run = header.add_run(degree_text)
         degree_run.font.size = Pt(10)
+        degree_run.font.color.rgb = RGBColor(102, 102, 102)
 
     if edu.get("startDate") or edu.get("endDate"):
         header.add_run("\t")

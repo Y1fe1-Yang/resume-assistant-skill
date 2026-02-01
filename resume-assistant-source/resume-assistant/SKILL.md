@@ -289,7 +289,7 @@ PDF / DOCX / HTML
 
 ```bash
 # 切换到skill目录
-cd ~/.claude/skills/resume-assistant-skill/resume-assistant-source/resume-assistant
+cd ~/.claude/skills/resume-assistant-skill
 
 # 生成HTML
 python scripts/create_web_resume.py --data resume_data.json --output resume.html
@@ -313,7 +313,7 @@ python scripts/create_web_resume.py --data resume_data.json --output resume.html
 
 ```bash
 # 切换到skill目录
-cd ~/.claude/skills/resume-assistant-skill/resume-assistant-source/resume-assistant
+cd ~/.claude/skills/resume-assistant-skill
 
 # 生成PDF（需要先配置字体）
 python scripts/create_pdf_resume.py --data resume_data.json --output resume.pdf
@@ -333,7 +333,7 @@ python scripts/create_pdf_resume.py --data resume_data.json --output resume.pdf
 
 ```bash
 # 切换到skill目录
-cd ~/.claude/skills/resume-assistant-skill/resume-assistant-source/resume-assistant
+cd ~/.claude/skills/resume-assistant-skill
 
 # 生成DOCX
 python scripts/create_docx_resume.py output.docx --data resume_data.json
@@ -350,7 +350,7 @@ python scripts/create_docx_resume.py output.docx --data resume_data.json
 
 ```bash
 # 切换到skill目录
-cd ~/.claude/skills/resume-assistant-skill/resume-assistant-source/resume-assistant
+cd ~/.claude/skills/resume-assistant-skill
 
 # 生成追踪表
 python scripts/create_growth_tracker.py --plan growth_plan.json --output tracker.xlsx
@@ -480,7 +480,7 @@ curl -L -o /tmp/fonts/NotoSansSC.ttf \
 
 **解决**：
 ```bash
-cd ~/.claude/skills/resume-assistant-skill/resume-assistant-source/resume-assistant
+cd ~/.claude/skills/resume-assistant-skill
 ```
 
 #### 3. JSON格式错误
