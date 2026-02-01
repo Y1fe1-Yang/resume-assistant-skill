@@ -16,6 +16,7 @@ import json
 import argparse
 import sys
 import re
+import html
 from pathlib import Path
 
 
@@ -118,11 +119,14 @@ def render_template(template_content: str, data: dict) -> str:
                 text = before + replacement + after
                 return process(text, ctx)
 
-        # Replace variables
+        # Replace variables with HTML escaping to prevent XSS
         def replace_var(m):
             var_name = m.group(1).strip()
             value = ctx.get(var_name, '')
-            return str(value) if value is not None else ''
+            # HTML escape to prevent XSS attacks
+            if value is not None:
+                return html.escape(str(value), quote=True)
+            return ''
 
         text = re.sub(r'\{\{(?!#|/)([^\}]+)\}\}', replace_var, text)
 

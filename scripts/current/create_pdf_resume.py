@@ -9,6 +9,7 @@ Usage:
 import json
 import argparse
 import sys
+import os
 from pathlib import Path
 
 try:
@@ -25,70 +26,135 @@ class ResumePDF(FPDF):
     def __init__(self):
         super().__init__()
         self.add_page()
-        # Use built-in Unicode font that supports Chinese
-        self.add_font('NotoSans', '', '/tmp/fonts/NotoSansSC.ttf')
-        self.set_font('NotoSans', '', 12)
+
+        # Try to load Chinese font with fallback mechanism
+        font_loaded = False
+        font_name = 'NotoSans'
+
+        # List of potential font paths to try
+        font_paths = [
+            os.getenv('RESUME_FONT_PATH'),  # Environment variable
+            '/tmp/fonts/NotoSansSC.ttf',     # Default path
+            str(Path.home() / '.fonts' / 'NotoSansSC.ttf'),  # User fonts
+            '/usr/share/fonts/truetype/noto/NotoSansSC-Regular.ttf',  # Linux system fonts
+            '/System/Library/Fonts/PingFang.ttc',  # macOS
+        ]
+
+        for font_path in font_paths:
+            if font_path and Path(font_path).exists():
+                try:
+                    self.add_font(font_name, '', font_path, uni=True)
+                    self.set_font(font_name, '', 12)
+                    font_loaded = True
+                    # Keep font_name as string
+                    font_name = str(font_name)
+                    break
+                except Exception:
+                    continue
+
+        if not font_loaded:
+            # Fallback mode: No Chinese font available
+            print("⚠️  WARNING: Chinese font not found!")
+            print("   PDF will be generated with limited character support.")
+            print("   Chinese characters will be replaced with '?' marks.")
+            print()
+            print("   To fix this, install Noto Sans SC font:")
+            print("   1. mkdir -p /tmp/fonts")
+            print("   2. curl -L -o /tmp/fonts/NotoSansSC.ttf \\")
+            print("      https://github.com/notofonts/noto-cjk/raw/main/Sans/Variable/TTF/Subset/NotoSansSC-VF.ttf")
+            print("   3. Or set RESUME_FONT_PATH=/path/to/your/font.ttf")
+            print()
+            print("   See references/troubleshooting.md for more details.\n")
+
+            # Use built-in helvetica (ASCII only)
+            # Chinese characters will be replaced with placeholders
+            font_name = 'helvetica'
+            self.set_font('helvetica', '', 12)
+
+        # Store font name and fallback status (use different name to avoid conflict with fpdf's current_font)
+        self.resume_font_name = font_name  # Keep as string
+        self.chinese_support = font_loaded
+
+    def safe_text(self, text):
+        """Convert text to ASCII-safe format if Chinese font not available."""
+        if not text:
+            return ''
+        if self.chinese_support:
+            return text
+        # Replace non-ASCII characters with Romanization hint
+        try:
+            text.encode('ascii')
+            return text
+        except UnicodeEncodeError:
+            # Return text with note that Chinese font is needed
+            return '[Chinese text - font required]'
 
     def header_section(self, name, title, contact):
         """Add header with name and contact info."""
         # Name
-        self.set_font('NotoSans', '', 24)
+        self.set_font(self.resume_font_name, '', 24)
         self.set_text_color(31, 41, 55)
-        self.cell(0, 10, name, align='C', new_x=XPos.LMARGIN, new_y=YPos.NEXT)
+        self.cell(0, 10, self.safe_text(name), align='C', new_x=XPos.LMARGIN, new_y=YPos.NEXT)
 
         # Title
         if title:
-            self.set_font('NotoSans', '', 12)
+            self.set_font(self.resume_font_name, '', 12)
             self.set_text_color(107, 114, 128)
-            self.cell(0, 7, title, align='C', new_x=XPos.LMARGIN, new_y=YPos.NEXT)
+            self.cell(0, 7, self.safe_text(title), align='C', new_x=XPos.LMARGIN, new_y=YPos.NEXT)
 
         # Contact
         if contact:
-            self.set_font('NotoSans', '', 9)
-            self.cell(0, 6, contact, align='C', new_x=XPos.LMARGIN, new_y=YPos.NEXT)
+            self.set_font(self.resume_font_name, '', 9)
+            self.cell(0, 6, self.safe_text(contact), align='C', new_x=XPos.LMARGIN, new_y=YPos.NEXT)
 
         self.ln(3)
 
     def section_title(self, title):
         """Add a section title."""
-        self.set_font('NotoSans', '', 14)
+        self.set_font(self.resume_font_name, '', 14)
         self.set_text_color(37, 99, 235)
-        self.cell(0, 8, title, new_x=XPos.LMARGIN, new_y=YPos.NEXT)
+        self.cell(0, 8, self.safe_text(title), new_x=XPos.LMARGIN, new_y=YPos.NEXT)
         self.ln(2)
 
     def entry_title(self, title, date=''):
         """Add an entry title with optional date."""
-        self.set_font('NotoSans', '', 11)
+        self.set_font(self.resume_font_name, '', 11)
         self.set_text_color(31, 41, 55)
+
+        title_safe = self.safe_text(title)
+        date_safe = self.safe_text(date)
 
         if date:
             # Title on left, date on right
-            title_width = self.get_string_width(title) + 2
-            self.cell(title_width, 6, title)
+            title_width = self.get_string_width(title_safe) + 2
+            self.cell(title_width, 6, title_safe)
 
             # Date on the right
-            self.set_x(self.w - self.r_margin - self.get_string_width(date))
+            self.set_x(self.w - self.r_margin - self.get_string_width(date_safe))
             self.set_text_color(107, 114, 128)
-            self.cell(0, 6, date, new_x=XPos.LMARGIN, new_y=YPos.NEXT)
+            self.cell(0, 6, date_safe, new_x=XPos.LMARGIN, new_y=YPos.NEXT)
         else:
-            self.cell(0, 6, title, new_x=XPos.LMARGIN, new_y=YPos.NEXT)
+            self.cell(0, 6, title_safe, new_x=XPos.LMARGIN, new_y=YPos.NEXT)
 
         self.set_text_color(31, 41, 55)
 
     def body_text(self, text, bullet=False):
         """Add body text with optional bullet point."""
-        self.set_font('NotoSans', '', 9)
+        self.set_font(self.resume_font_name, '', 9)
         self.set_text_color(55, 65, 81)
 
+        text_safe = self.safe_text(text)
+
         if bullet:
-            # Bullet point
+            # Bullet point (use ASCII-safe bullet if no Chinese support)
+            bullet_char = '•' if self.chinese_support else '-'
             x_start = self.get_x()
-            self.cell(5, 5, '•')
+            self.cell(5, 5, bullet_char)
             self.set_x(x_start + 5)
             # Multi-line text
-            self.multi_cell(0, 4, text)
+            self.multi_cell(0, 4, text_safe)
         else:
-            self.multi_cell(0, 5, text)
+            self.multi_cell(0, 5, text_safe)
 
         self.ln(1)
 
