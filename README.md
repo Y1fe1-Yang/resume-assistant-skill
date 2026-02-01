@@ -32,15 +32,12 @@ curl -L -O https://github.com/Y1fe1-Yang/resume-assistant-skill/releases/latest/
 
 # 安装技能包
 claude skills install resume-assistant-skill.skill
+
+# 安装 Python 依赖
+pip install fpdf2 python-docx openpyxl
 ```
 
-**环境配置**（首次使用）:
-```bash
-pip install fpdf2 python-docx openpyxl
-mkdir -p /tmp/fonts
-curl -L -o /tmp/fonts/NotoSansSC.ttf \
-  "https://github.com/notofonts/noto-cjk/raw/main/Sans/Variable/TTF/Subset/NotoSansSC-VF.ttf"
-```
+**✅ 中文字体已内置** - PDF 生成功能开箱即用，无需手动配置！
 
 ### ✨ 功能特点
 
@@ -125,26 +122,11 @@ curl -L -o /tmp/fonts/NotoSansSC.ttf \
 - ✅ **Claude Code** 已安装
 - ✅ **Python 3.7+** 用于脚本执行
 - ✅ **Python 包**: `fpdf2`, `python-docx`, `openpyxl`
-- ✅ **字体**: NotoSansSC（用于中文 PDF 生成）
+- ✅ **中文字体**: 已内置（开箱即用）
 
 ### 🔧 故障排查
 
-**PDF 生成失败**:
-```bash
-# 重新下载字体
-rm -f /tmp/fonts/NotoSansSC.ttf
-mkdir -p /tmp/fonts
-curl -L -o /tmp/fonts/NotoSansSC.ttf \
-  "https://github.com/notofonts/noto-cjk/raw/main/Sans/Variable/TTF/Subset/NotoSansSC-VF.ttf"
-```
-
-**脚本找不到**:
-```bash
-# 确保在正确目录
-cd ~/.claude/skills/resume-assistant
-```
-
-更多问题请查看 [references/troubleshooting.md](references/troubleshooting.md)
+遇到问题请查看 [故障排查指南](references/troubleshooting.md)
 
 ### 🌟 特色亮点
 
@@ -194,15 +176,12 @@ curl -L -O https://github.com/Y1fe1-Yang/resume-assistant-skill/releases/latest/
 
 # Install the skill
 claude skills install resume-assistant-skill.skill
+
+# Install Python dependencies
+pip install fpdf2 python-docx openpyxl
 ```
 
-**Environment setup** (first time only):
-```bash
-pip install fpdf2 python-docx openpyxl
-mkdir -p /tmp/fonts
-curl -L -o /tmp/fonts/NotoSansSC.ttf \
-  "https://github.com/notofonts/noto-cjk/raw/main/Sans/Variable/TTF/Subset/NotoSansSC-VF.ttf"
-```
+**✅ Chinese font bundled** - PDF generation works out of the box!
 
 ### ✨ Features
 
@@ -287,26 +266,11 @@ After installation, simply chat with Claude Code:
 - ✅ **Claude Code** installed
 - ✅ **Python 3.7+** for script execution
 - ✅ **Python packages**: `fpdf2`, `python-docx`, `openpyxl`
-- ✅ **Font**: NotoSansSC (for Chinese PDF generation)
+- ✅ **Chinese font**: Bundled (works out of the box)
 
 ### 🔧 Troubleshooting
 
-**PDF generation fails**:
-```bash
-# Re-download font
-rm -f /tmp/fonts/NotoSansSC.ttf
-mkdir -p /tmp/fonts
-curl -L -o /tmp/fonts/NotoSansSC.ttf \
-  "https://github.com/notofonts/noto-cjk/raw/main/Sans/Variable/TTF/Subset/NotoSansSC-VF.ttf"
-```
-
-**Script not found**:
-```bash
-# Ensure correct directory
-cd ~/.claude/skills/resume-assistant
-```
-
-For more issues, see [references/troubleshooting.md](references/troubleshooting.md)
+For issues, see [Troubleshooting Guide](references/troubleshooting.md)
 
 ### 🌟 Highlights
 
